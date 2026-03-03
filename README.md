@@ -17,7 +17,7 @@ A lightweight Python chatbot service that can sit behind an iMessage webhook bri
 - `OPENAI_MODEL` (optional, default: `gpt-4o-mini`)
 - `PORT` (optional, default: `8000`)
 
-## Run
+## Run locally (desktop/server)
 
 ```bash
 python app/main.py
@@ -33,6 +33,71 @@ curl -X POST http://localhost:8000/webhook/imessage \
     "text": "What should I work on next?",
     "repository": "octocat/Hello-World"
   }'
+```
+
+---
+
+## I’m on iPad — how do I use this?
+
+You usually **won’t run this Python server directly on iPad**. Instead:
+
+1. Host this service on a small cloud runtime (Railway, Render, Fly.io, or a VPS).
+2. Set environment variables there (`OPENAI_API_KEY`, optional `GITHUB_TOKEN`).
+3. Use the public HTTPS URL as your iMessage bridge webhook target.
+
+### iPad-first setup flow
+
+1. Push this repo to GitHub.
+2. Open your cloud host app/site in Safari.
+3. Create a new service from your GitHub repo.
+4. Add env vars:
+   - `OPENAI_API_KEY=...`
+   - `GITHUB_TOKEN=...` (optional)
+5. Deploy.
+6. Copy your public URL, for example:
+   - `https://your-bot.example.com/webhook/imessage`
+7. Paste that URL into your iMessage bridge's incoming webhook config.
+
+### Quick test from iPad (no terminal)
+
+Use an API client app (e.g. HTTPBot, Postman mobile, or any REST client), then send:
+
+- Method: `POST`
+- URL: `https://your-bot.example.com/webhook/imessage`
+- Header: `Content-Type: application/json`
+- Body:
+
+```json
+{
+  "sender": "+15551234567",
+  "text": "Summarize open issues",
+  "repository": "octocat/Hello-World"
+}
+```
+
+You should get:
+
+```json
+{
+  "reply": "...",
+  "context": {
+    "name": "octocat/Hello-World",
+    "description": "...",
+    "open_issues": []
+  }
+}
+```
+
+### Health check URL
+
+Open this in Safari to verify deployment is up:
+
+- `https://your-bot.example.com/health`
+
+Expected response:
+
+```json
+{"status":"ok"}
 ```
 
 ## iMessage integration note
