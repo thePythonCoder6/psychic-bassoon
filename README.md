@@ -100,6 +100,43 @@ Expected response:
 {"status":"ok"}
 ```
 
+
+## Render setup (recommended for iPad users)
+
+Since you're deploying on Render, this repo now includes a `render.yaml` blueprint for one-click setup.
+
+### Option A: Blueprint deploy (fastest)
+
+1. Push this repository to GitHub.
+2. In Render, click **New +** → **Blueprint**.
+3. Select your repo. Render will read `render.yaml` automatically.
+4. In the service settings, set secret environment variables:
+   - `OPENAI_API_KEY` (required for AI responses)
+   - `GITHUB_TOKEN` (optional but recommended for higher GitHub API limits)
+5. Deploy.
+
+### Option B: Manual Web Service deploy
+
+If you prefer manual setup, create a Python Web Service with:
+
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `python app/main.py`
+- **Environment Variables**:
+  - `PORT=10000`
+  - `OPENAI_MODEL=gpt-4o-mini`
+  - `OPENAI_API_KEY=...`
+  - `GITHUB_TOKEN=...` (optional)
+
+### Render health check and webhook URL
+
+After deploy, verify:
+
+- `https://<your-render-service>.onrender.com/health`
+
+Then configure your iMessage bridge webhook URL as:
+
+- `https://<your-render-service>.onrender.com/webhook/imessage`
+
 ## iMessage integration note
 
 Use any iMessage bridge that can forward incoming messages to webhooks, then send the returned `reply` back to the user through that bridge.
